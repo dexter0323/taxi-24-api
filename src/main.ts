@@ -1,4 +1,4 @@
-import { ValidationPipe } from '@nestjs/common';
+import { Logger, ValidationPipe } from '@nestjs/common';
 import { NestFactory } from '@nestjs/core';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 import * as cookieParser from 'cookie-parser';
@@ -49,5 +49,7 @@ import { Environment } from 'src/infrastructure/config/environment-config/enviro
     SwaggerModule.setup('api', app, document);
   }
 
-  await app.listen(process.env.API_PORT);
+  await app.listen(process.env.API_PORT, () =>
+    Logger.log(`taxi-24-api listenning on port: ${process.env.API_PORT}`),
+  );
 })();

@@ -1,16 +1,15 @@
-import * as request from 'supertest';
-import { Test } from '@nestjs/testing';
 import { ExecutionContext, INestApplication } from '@nestjs/common';
+import { Test } from '@nestjs/testing';
 import * as cookieParser from 'cookie-parser';
-import { UseCaseProxy } from '../src/infrastructure/usecases-proxy/usecases-proxy';
-import { UsecasesProxyModule } from '../src/infrastructure/usecases-proxy/usecases-proxy.module';
-import { LoginUseCases } from '../src/usecases/auth/login.usecases';
-import { IsAuthenticatedUseCases } from '../src/usecases/auth/isAuthenticated.usecases';
-import { AppModule } from '../src/app.module';
-import { JwtAuthGuard } from '../src/infrastructure/common/guards/jwtAuth.guard';
-import JwtRefreshGuard from '../src/infrastructure/common/guards/jwtRefresh.guard';
+import * as request from 'supertest';
 
-require('module-alias/register');
+import { AppModule } from 'src/app.module';
+import { JwtAuthGuard } from 'src/infrastructure/common/guards/jwtAuth.guard';
+import JwtRefreshGuard from 'src/infrastructure/common/guards/jwtRefresh.guard';
+import { UseCaseProxy } from 'src/infrastructure/usecases-proxy/usecases-proxy';
+import { UsecasesProxyModule } from 'src/infrastructure/usecases-proxy/usecases-proxy.module';
+import { IsAuthenticatedUseCases } from 'src/usecases/auth/isAuthenticated.usecases';
+import { LoginUseCases } from 'src/usecases/auth/login.usecases';
 
 describe('infrastructure/controllers/auth', () => {
   let app: INestApplication;
