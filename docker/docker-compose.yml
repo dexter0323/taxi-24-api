@@ -1,0 +1,46 @@
+services:
+  db:
+    image: postgres
+    environment:
+      POSTGRES_USER: ${DB_USER}
+      POSTGRES_PASSWORD: ${DB_PASS}
+      POSTGRES_DB: ${DB_NAME}
+    volumes:
+      - db_data:/var/lib/postgresql/data
+    ports:
+      - "${DB_PORT}:${DB_PORT}"
+    networks:
+      - taxi-24-api-network
+
+  taxi-24-api:
+    build:
+      context: ..
+      dockerfile: docker/Dockerfile
+    environment:
+      NODE_ENV: ${NODE_ENV}
+      API_PORT: ${API_PORT}
+      DB_TYPE: ${DB_TYPE}
+      DB_HOST: ${DB_HOST}
+      DB_PORT: ${DB_PORT}
+      DB_USER: ${DB_USER}
+      DB_PASS: ${DB_PASS}
+      DB_NAME: ${DB_NAME}
+      DB_SCHEMA: ${DB_SCHEMA}
+      DB_SYNC: ${DB_SYNC}
+      JWT_SECRET: ${JWT_SECRET}
+      JWT_EXPIRATION_TIME: ${JWT_EXPIRATION_TIME}
+      JWT_REFRESH_TOKEN_SECRET: ${JWT_REFRESH_TOKEN_SECRET}
+      JWT_REFRESH_TOKEN_EXPIRATION_TIME: ${JWT_REFRESH_TOKEN_EXPIRATION_TIME}
+    ports:
+      - "${API_PORT}:${API_PORT}"
+    depends_on:
+      - db
+    networks:
+      - taxi-24-api-network
+
+volumes:
+  db_data:
+
+networks:
+  taxi-24-api-network:
+    driver: bridge
