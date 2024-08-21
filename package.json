@@ -91,7 +91,10 @@
     "collectCoverageFrom": [
       "**/*.(t|j)s"
     ],
-    "coverageDirectory": "../coverage",
+    "coverageDirectory": "../tests/coverage",
     "testEnvironment": "node"
+  },
+  "engines": {
+    "node": ">=20.16.0"
   }
 }
