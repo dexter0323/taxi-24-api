@@ -8,10 +8,10 @@
   "scripts": {
     "build": "nest build",
     "format": "prettier --write \"src/**/*.ts\" \"tests/**/*.ts\"",
-    "start": "nest start",
+    "start": "ENV_FILE_PATH=.env.local nest start",
     "start:dev": "nest start --watch",
     "start:debug": "nest start --debug --watch",
-    "start:prod": "node dist/main",
+    "start:prod": "node dist/src/main",
     "lint": "eslint \"{src,apps,libs,tests}/**/*.ts\" --fix",
     "test": "jest",
     "test:watch": "jest --watch",
@@ -23,13 +23,13 @@
     "typeorm:create": "npm run typeorm migration:create -n",
     "typeorm:run": "npm run typeorm migration:run",
     "typeorm:revert": "npm run typeorm migration:revert",
-    "docker:db": "docker compose --env-file .env -f docker/docker-compose.yml up -d db",
+    "start:docker": "npm run docker:db && npm run docker:build && npm run docker:up",
+    "stop:docker": "npm run docker:down",
+    "docker:db": "docker compose --env-file .env -f docker/docker-compose.yml up -d taxi-24-db",
     "docker:build": "docker compose --env-file .env -f docker/docker-compose.yml build taxi-24-api",
     "docker:up": "docker compose --env-file .env -f docker/docker-compose.yml up -d taxi-24-api",
     "docker:down": "docker compose --env-file .env -f docker/docker-compose.yml down",
-    "docker:logs": "docker compose --env-file .env -f docker/docker-compose.yml logs -f taxi-24-api",
-    "start:docker": "npm run docker:db && npm run docker:build && npm run docker:up",
-    "stop:docker": "npm run docker:down"
+    "docker:logs": "docker compose --env-file .env -f docker/docker-compose.yml logs -f taxi-24-api"
   },
   "dependencies": {
     "@nestjs/common": "^10.0.0",

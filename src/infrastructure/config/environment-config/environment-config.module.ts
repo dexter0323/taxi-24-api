@@ -7,7 +7,7 @@ import { validate } from './environment-config.validation';
 @Module({
   imports: [
     ConfigModule.forRoot({
-      envFilePath: '.env',
+      envFilePath: process.env.ENV_FILE_PATH || '.env',
       isGlobal: true,
       validate,
     }),

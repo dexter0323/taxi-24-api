@@ -1,16 +1,16 @@
 # docker/Dockerfile
 
 # Stage 1: Build the application
-FROM arm32v7/node:20.16.0-alpine AS builder
+FROM node:20.16.0-alpine AS builder
+
+# Install dependencies (including Python and build tools)
+RUN apk add --no-cache python3 make g++ 
 
 # Set the working directory inside the container
-WORKDIR /usr/src/app
+WORKDIR /usr/app
 
 # Copy package.json and package-lock.json files
 COPY package*.json ./
-
-# Copy env file
-COPY .env ./
 
 # Install dependencies
 RUN npm ci --silent
@@ -18,23 +18,26 @@ RUN npm ci --silent
 # Copy the rest of the application code
 COPY . .
 
+# Rebuild bcrypt with the correct architecture
+RUN npm rebuild bcrypt --build-from-source
+
 # Build the TypeScript code
 RUN npm run build
 
 # Stage 2: Run the application
 FROM node:20.16.0-alpine
 
-# Set the working directory inside the container
-WORKDIR /usr/src/app
-
 # Copy only the necessary files from the build stage
-COPY --from=builder /usr/src/app/dist ./dist
-COPY --from=builder /usr/src/app/node_modules ./node_modules
-COPY --from=builder /usr/src/app/package*.json ./
-COPY --from=builder /usr/src/app/.env ./
+COPY --from=builder /usr/app/dist ./dist
 
-# Expose the application port (e.g., 3000)
-EXPOSE 3000
+# Copy node_modules from the build stage
+COPY --from=builder /usr/app/node_modules ./node_modules
 
-# Define the command to run the application
+# Copy .env file
+COPY --from=builder /usr/app/.env ./
+
+# Copy package.json file
+COPY package.json ./
+
+# Start the application
 CMD ["npm", "run", "start:prod"]
