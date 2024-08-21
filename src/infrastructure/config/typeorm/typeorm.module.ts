@@ -3,9 +3,7 @@ import { TypeOrmModule, TypeOrmModuleOptions } from '@nestjs/typeorm';
 import { EnvironmentConfigModule } from 'src/infrastructure/config/environment-config/environment-config.module';
 import { EnvironmentConfigService } from 'src/infrastructure/config/environment-config/environment-config.service';
 
-export const getTypeOrmModuleOptions = (
-  config: EnvironmentConfigService,
-): TypeOrmModuleOptions => {
+export const getTypeOrmModuleOptions = (config: EnvironmentConfigService): TypeOrmModuleOptions => {
   switch (config.getDatabaseType()) {
     case 'postgres':
       return {

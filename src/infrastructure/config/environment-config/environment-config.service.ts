@@ -1,14 +1,13 @@
 import { Injectable } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { DatabaseConfig } from 'src/domain/config/database.interface';
-import { DatabaseType } from 'typeorm';
 
 @Injectable()
 export class EnvironmentConfigService implements DatabaseConfig {
   constructor(private configService: ConfigService) {}
 
-  getDatabaseType(): DatabaseType {
-    return this.configService.get<DatabaseType>('DB_TYPE');
+  getDatabaseType(): string {
+    return this.configService.get<string>('DB_TYPE');
   }
 
   getDatabaseHost(): string {
