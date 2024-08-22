@@ -50,6 +50,6 @@ import { Environment } from 'src/infrastructure/config/environment-config/enviro
   }
 
   await app.listen(process.env.API_PORT, () =>
-    Logger.log(`Listenning on port: ${process.env.API_PORT}`, 'taxi-24-api'),
+    Logger.log(`Listenning on port ${process.env.API_PORT}`, 'taxi-24-api'),
   );
 })();

@@ -1,13 +1,10 @@
-import { DataSource, DataSourceOptions } from 'typeorm';
 import * as dotenv from 'dotenv';
 import * as path from 'path';
-import { readFileSync } from 'fs';
+import { DataSource } from 'typeorm';
 
-if (process.env.NODE_ENV === 'local') {
-  dotenv.config({
-    path: path.resolve(__dirname, '../../../../', '.env.local'),
-  });
-}
+dotenv.config({
+  path: path.resolve(__dirname, '../../../../', process.env.ENV_FILE_PATH || '.env'),
+});
 
 const dataSource = new DataSource({
   type: 'postgres',
@@ -20,7 +17,6 @@ const dataSource = new DataSource({
   schema: process.env.DB_SCHEMA,
   entities: [__dirname + './../../**/*.entity{.ts,.js}'],
   migrationsRun: true,
-  migrationsTableName: 'migration_todo',
   migrations: ['database/migrations/**/*{.ts,.js}'],
   // ssl: { rejectUnauthorized: false },
 });

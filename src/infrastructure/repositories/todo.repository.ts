@@ -14,12 +14,7 @@ export class DatabaseTodoRepository implements TodoRepository {
   ) {}
 
   async updateContent(id: number, isDone: boolean): Promise<void> {
-    await this.todoEntityRepository.update(
-      {
-        id: id,
-      },
-      { is_done: isDone },
-    );
+    await this.todoEntityRepository.update({ id: id }, { is_done: isDone });
   }
   async insert(todo: TodoM): Promise<TodoM> {
     const todoEntity = this.toTodoEntity(todo);
@@ -29,12 +24,10 @@ export class DatabaseTodoRepository implements TodoRepository {
   }
   async findAll(): Promise<TodoM[]> {
     const todosEntity = await this.todoEntityRepository.find();
-    return todosEntity.map((todoEntity) => this.toTodo(todoEntity));
+    return todosEntity.map(todoEntity => this.toTodo(todoEntity));
   }
   async findById(id: number): Promise<TodoM> {
-    const todoEntity = await this.todoEntityRepository.findOneOrFail({
-      where: { id },
-    });
+    const todoEntity = await this.todoEntityRepository.findOneOrFail({ where: { id } });
     return this.toTodo(todoEntity);
   }
   async deleteById(id: number): Promise<void> {

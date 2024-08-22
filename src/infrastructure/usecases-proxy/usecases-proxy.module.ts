@@ -5,6 +5,7 @@ import { EnvironmentConfigService } from 'src/infrastructure/config/environment-
 import { ExceptionsModule } from 'src/infrastructure/exceptions/exceptions.module';
 import { LoggerModule } from 'src/infrastructure/logger/logger.module';
 import { LoggerService } from 'src/infrastructure/logger/logger.service';
+import { DatabaseDriverRepository } from 'src/infrastructure/repositories/driver.repository';
 import { RepositoriesModule } from 'src/infrastructure/repositories/repositories.module';
 import { DatabaseTodoRepository } from 'src/infrastructure/repositories/todo.repository';
 import { DatabaseUserRepository } from 'src/infrastructure/repositories/user.repository';
@@ -16,6 +17,10 @@ import { UseCaseProxy } from 'src/infrastructure/usecases-proxy/usecases-proxy';
 import { IsAuthenticatedUseCases } from 'src/usecases/auth/isAuthenticated.usecases';
 import { LoginUseCases } from 'src/usecases/auth/login.usecases';
 import { LogoutUseCases } from 'src/usecases/auth/logout.usecases';
+import { GetDriverUseCases } from 'src/usecases/driver/getDriver.usecases';
+import { GetDriversUseCases } from 'src/usecases/driver/getDrivers.usecases';
+import { GetDriversAvailableUseCases } from 'src/usecases/driver/getDriversAvailable.usecases';
+import { GetDriversAvailableWithin3kmUseCases } from 'src/usecases/driver/getDriversAvailableWithin3km.usecases';
 import { addTodoUseCases } from 'src/usecases/todo/addTodo.usecases';
 import { deleteTodoUseCases } from 'src/usecases/todo/deleteTodo.usecases';
 import { GetTodoUseCases } from 'src/usecases/todo/getTodo.usecases';
@@ -38,11 +43,23 @@ export class UsecasesProxyModule {
   static IS_AUTHENTICATED_USECASES_PROXY = 'IsAuthenticatedUseCasesProxy';
   static LOGOUT_USECASES_PROXY = 'LogoutUseCasesProxy';
 
+  // Todo
   static GET_TODO_USECASES_PROXY = 'getTodoUsecasesProxy';
   static GET_TODOS_USECASES_PROXY = 'getTodosUsecasesProxy';
   static POST_TODO_USECASES_PROXY = 'postTodoUsecasesProxy';
   static DELETE_TODO_USECASES_PROXY = 'deleteTodoUsecasesProxy';
   static PUT_TODO_USECASES_PROXY = 'putTodoUsecasesProxy';
+
+  // Driver
+  /** Obtener un conductor específico por ID */
+  static GET_DRIVER_USECASES_PROXY = 'getDriverUsecasesProxy';
+  /** Obtenga una lista de todos los conductores */
+  static GET_DRIVERS_USECASES_PROXY = 'getDriversUsecasesProxy';
+  /** Obtenga una lista de todos los conductores disponibles */
+  static GET_DRIVERS_AVAILABLE_USECASES_PROXY = 'getDriversAvailableUsecasesProxy';
+  /** Obtenga una lista de todos los conductores disponibles en un radio de 3 km para la ubicación especificada */
+  static GET_DRIVERS_AVAILABLE_WITHIN_3KM_USECASES_PROXY =
+    'getDriversAvailableWithin3kmUsecasesProxy';
 
   static register(): DynamicModule {
     return {
@@ -65,13 +82,7 @@ export class UsecasesProxyModule {
             bcryptService: BcryptService,
           ) =>
             new UseCaseProxy(
-              new LoginUseCases(
-                logger,
-                jwtTokenService,
-                config,
-                userRepo,
-                bcryptService,
-              ),
+              new LoginUseCases(logger, jwtTokenService, config, userRepo, bcryptService),
             ),
         },
         {
@@ -100,26 +111,44 @@ export class UsecasesProxyModule {
         {
           inject: [LoggerService, DatabaseTodoRepository],
           provide: UsecasesProxyModule.POST_TODO_USECASES_PROXY,
-          useFactory: (
-            logger: LoggerService,
-            todoRepository: DatabaseTodoRepository,
-          ) => new UseCaseProxy(new addTodoUseCases(logger, todoRepository)),
+          useFactory: (logger: LoggerService, todoRepository: DatabaseTodoRepository) =>
+            new UseCaseProxy(new addTodoUseCases(logger, todoRepository)),
         },
         {
           inject: [LoggerService, DatabaseTodoRepository],
           provide: UsecasesProxyModule.PUT_TODO_USECASES_PROXY,
-          useFactory: (
-            logger: LoggerService,
-            todoRepository: DatabaseTodoRepository,
-          ) => new UseCaseProxy(new updateTodoUseCases(logger, todoRepository)),
+          useFactory: (logger: LoggerService, todoRepository: DatabaseTodoRepository) =>
+            new UseCaseProxy(new updateTodoUseCases(logger, todoRepository)),
         },
         {
           inject: [LoggerService, DatabaseTodoRepository],
           provide: UsecasesProxyModule.DELETE_TODO_USECASES_PROXY,
-          useFactory: (
-            logger: LoggerService,
-            todoRepository: DatabaseTodoRepository,
-          ) => new UseCaseProxy(new deleteTodoUseCases(logger, todoRepository)),
+          useFactory: (logger: LoggerService, todoRepository: DatabaseTodoRepository) =>
+            new UseCaseProxy(new deleteTodoUseCases(logger, todoRepository)),
+        },
+        {
+          inject: [LoggerService, DatabaseDriverRepository],
+          provide: UsecasesProxyModule.GET_DRIVER_USECASES_PROXY,
+          useFactory: (logger: LoggerService, driverRepository: DatabaseDriverRepository) =>
+            new UseCaseProxy(new GetDriverUseCases(logger, driverRepository)),
+        },
+        {
+          inject: [LoggerService, DatabaseDriverRepository],
+          provide: UsecasesProxyModule.GET_DRIVERS_USECASES_PROXY,
+          useFactory: (logger: LoggerService, driverRepository: DatabaseDriverRepository) =>
+            new UseCaseProxy(new GetDriversUseCases(logger, driverRepository)),
+        },
+        {
+          inject: [LoggerService, DatabaseDriverRepository],
+          provide: UsecasesProxyModule.GET_DRIVERS_AVAILABLE_USECASES_PROXY,
+          useFactory: (logger: LoggerService, driverRepository: DatabaseDriverRepository) =>
+            new UseCaseProxy(new GetDriversAvailableUseCases(logger, driverRepository)),
+        },
+        {
+          inject: [LoggerService, DatabaseDriverRepository],
+          provide: UsecasesProxyModule.GET_DRIVERS_AVAILABLE_WITHIN_3KM_USECASES_PROXY,
+          useFactory: (logger: LoggerService, driverRepository: DatabaseDriverRepository) =>
+            new UseCaseProxy(new GetDriversAvailableWithin3kmUseCases(logger, driverRepository)),
         },
       ],
       exports: [
@@ -128,9 +157,15 @@ export class UsecasesProxyModule {
         UsecasesProxyModule.POST_TODO_USECASES_PROXY,
         UsecasesProxyModule.PUT_TODO_USECASES_PROXY,
         UsecasesProxyModule.DELETE_TODO_USECASES_PROXY,
+
         UsecasesProxyModule.LOGIN_USECASES_PROXY,
         UsecasesProxyModule.IS_AUTHENTICATED_USECASES_PROXY,
         UsecasesProxyModule.LOGOUT_USECASES_PROXY,
+
+        UsecasesProxyModule.GET_DRIVER_USECASES_PROXY,
+        UsecasesProxyModule.GET_DRIVERS_USECASES_PROXY,
+        UsecasesProxyModule.GET_DRIVERS_AVAILABLE_USECASES_PROXY,
+        UsecasesProxyModule.GET_DRIVERS_AVAILABLE_WITHIN_3KM_USECASES_PROXY,
       ],
     };
   }

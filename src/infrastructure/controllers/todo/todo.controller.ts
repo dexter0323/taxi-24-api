@@ -52,7 +52,7 @@ export class TodoController {
   @ApiResponseType(TodoPresenter, true)
   async getTodos() {
     const todos = await this.getAllTodoUsecaseProxy.getInstance().execute();
-    return todos.map((todo) => new TodoPresenter(todo));
+    return todos.map(todo => new TodoPresenter(todo));
   }
 
   @Put('todo')
@@ -74,9 +74,7 @@ export class TodoController {
   @ApiResponseType(TodoPresenter, true)
   async addTodo(@Body() addTodoDto: AddTodoDto) {
     const { content } = addTodoDto;
-    const todoCreated = await this.addTodoUsecaseProxy
-      .getInstance()
-      .execute(content);
+    const todoCreated = await this.addTodoUsecaseProxy.getInstance().execute(content);
     return new TodoPresenter(todoCreated);
   }
 }
