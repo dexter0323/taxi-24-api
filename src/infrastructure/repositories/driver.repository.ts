@@ -72,7 +72,6 @@ export class DatabaseDriverRepository implements DriverRepository {
   async insert(driver: DriverM): Promise<DriverM> {
     const todoEntity = this.toDriverEntity(driver);
     const result = await this.driverEntityRepository.insert(todoEntity);
-    console.log(result.generatedMaps);
     return this.toDriver(result.generatedMaps[0] as Driver);
   }
 

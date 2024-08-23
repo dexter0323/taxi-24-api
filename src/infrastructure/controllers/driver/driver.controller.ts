@@ -59,8 +59,6 @@ export class DriverController {
       .getInstance()
       .execute(longitude, latitude, radius);
 
-    console.log('drivers', drivers);
-
     return drivers.map(driver => new DriverPresenter(driver));
   }
 }
