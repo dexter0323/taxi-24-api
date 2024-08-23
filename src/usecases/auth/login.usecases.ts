@@ -1,8 +1,5 @@
 import { IBcryptService } from 'src/domain/adapters/bcrypt.interface';
-import {
-  IJwtService,
-  IJwtServicePayload,
-} from 'src/domain/adapters/jwt.interface';
+import { IJwtService, IJwtServicePayload } from 'src/domain/adapters/jwt.interface';
 import { JWTConfig } from 'src/domain/config/jwt.interface';
 import { ILogger } from 'src/domain/logger/logger.interface';
 import { UserRepository } from 'src/domain/repositories/userRepository.interface';
@@ -17,11 +14,8 @@ export class LoginUseCases {
   ) {}
 
   async getCookieWithJwtToken(username: string) {
-    this.logger.log(
-      'LoginUseCases execute',
-      `The user ${username} have been logged.`,
-    );
-    const payload: IJwtServicePayload = { username: username };
+    this.logger.log('LoginUseCases execute', `The user ${username} have been logged.`);
+    const payload: IJwtServicePayload = { username };
     const secret = this.jwtConfig.getJwtSecret();
     const expiresIn = this.jwtConfig.getJwtExpirationTime() + 's';
     const token = this.jwtTokenService.createToken(payload, secret, expiresIn);
@@ -29,11 +23,8 @@ export class LoginUseCases {
   }
 
   async getCookieWithJwtRefreshToken(username: string) {
-    this.logger.log(
-      'LoginUseCases execute',
-      `The user ${username} have been logged.`,
-    );
-    const payload: IJwtServicePayload = { username: username };
+    this.logger.log('LoginUseCases execute', `The user ${username} have been logged.`);
+    const payload: IJwtServicePayload = { username };
     const secret = this.jwtConfig.getJwtRefreshSecret();
     const expiresIn = this.jwtConfig.getJwtRefreshExpirationTime() + 's';
     const token = this.jwtTokenService.createToken(payload, secret, expiresIn);
@@ -42,7 +33,7 @@ export class LoginUseCases {
     return cookie;
   }
 
-  async validateUserForLocalStragtegy(username: string, pass: string) {
+  async validateUserForLocalStrategy(username: string, pass: string) {
     const user = await this.userRepository.getUserByUsername(username);
     if (!user) {
       return null;
@@ -50,14 +41,13 @@ export class LoginUseCases {
     const match = await this.bcryptService.compare(pass, user.password);
     if (user && match) {
       await this.updateLoginTime(user.username);
-      // eslint-disable-next-line @typescript-eslint/no-unused-vars
       const { password, ...result } = user;
       return result;
     }
     return null;
   }
 
-  async validateUserForJWTStragtegy(username: string) {
+  async validateUserForJWTStrategy(username: string) {
     const user = await this.userRepository.getUserByUsername(username);
     if (!user) {
       return null;
@@ -70,12 +60,8 @@ export class LoginUseCases {
   }
 
   async setCurrentRefreshToken(refreshToken: string, username: string) {
-    const currentHashedRefreshToken =
-      await this.bcryptService.hash(refreshToken);
-    await this.userRepository.updateRefreshToken(
-      username,
-      currentHashedRefreshToken,
-    );
+    const currentHashedRefreshToken = await this.bcryptService.hash(refreshToken);
+    await this.userRepository.updateRefreshToken(username, currentHashedRefreshToken);
   }
 
   async getUserIfRefreshTokenMatches(refreshToken: string, username: string) {

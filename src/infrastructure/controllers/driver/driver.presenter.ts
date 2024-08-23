@@ -7,7 +7,9 @@ export class DriverPresenter {
   @ApiProperty()
   status: string;
   @ApiProperty()
-  location: string;
+  latitude: number;
+  @ApiProperty()
+  longitude: number;
   @ApiProperty()
   createdate: Date;
   @ApiProperty()
@@ -16,7 +18,8 @@ export class DriverPresenter {
   constructor(driver: DriverM) {
     this.id = driver.id;
     this.status = driver.status;
-    this.location = driver.location;
+    this.latitude = driver.latitude;
+    this.longitude = driver.longitude;
     this.createdate = driver.createdDate;
     this.updateddate = driver.updatedDate;
   }

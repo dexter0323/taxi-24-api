@@ -1,13 +1,4 @@
-import {
-  Body,
-  Controller,
-  Get,
-  Inject,
-  Post,
-  Req,
-  Request,
-  UseGuards,
-} from '@nestjs/common';
+import { Body, Controller, Get, Inject, Post, Req, Request, UseGuards } from '@nestjs/common';
 import {
   ApiBearerAuth,
   ApiBody,
@@ -17,7 +8,7 @@ import {
   ApiTags,
 } from '@nestjs/swagger';
 
-import { AuthLoginDto } from './auth-dto.class';
+import { AuthLoginDto, AuthSignUpDto } from './auth-dto.class';
 import { IsAuthPresenter } from './auth.presenter';
 
 import { JwtAuthGuard } from 'src/infrastructure/common/guards/jwtAuth.guard';
@@ -27,8 +18,9 @@ import { ApiResponseType } from 'src/infrastructure/common/swagger/response.deco
 import { UseCaseProxy } from 'src/infrastructure/usecases-proxy/usecases-proxy';
 import { UsecasesProxyModule } from 'src/infrastructure/usecases-proxy/usecases-proxy.module';
 import { IsAuthenticatedUseCases } from 'src/usecases/auth/isAuthenticated.usecases';
-import { LoginUseCases } from 'src/usecases/auth/login.usecases';
 import { LogoutUseCases } from 'src/usecases/auth/logout.usecases';
+import { LoginUseCases } from 'src/usecases/auth/login.usecases';
+import { SignUpUseCases as SignupUseCases } from 'src/usecases/auth/signup.usecases';
 
 @Controller('auth')
 @ApiTags('auth')
@@ -40,6 +32,8 @@ import { LogoutUseCases } from 'src/usecases/auth/logout.usecases';
 @ApiExtraModels(IsAuthPresenter)
 export class AuthController {
   constructor(
+    @Inject(UsecasesProxyModule.SIGNUP_USECASES_PROXY)
+    private readonly signupUsecaseProxy: UseCaseProxy<SignupUseCases>,
     @Inject(UsecasesProxyModule.LOGIN_USECASES_PROXY)
     private readonly loginUsecaseProxy: UseCaseProxy<LoginUseCases>,
     @Inject(UsecasesProxyModule.LOGOUT_USECASES_PROXY)
@@ -48,22 +42,37 @@ export class AuthController {
     private readonly isAuthUsecaseProxy: UseCaseProxy<IsAuthenticatedUseCases>,
   ) {}
 
+  @Post('signup')
+  @ApiBearerAuth()
+  @ApiBody({ type: AuthSignUpDto })
+  @ApiOperation({ description: 'sigup' })
+  async sigup(@Body() auth: AuthSignUpDto, @Request() request: any) {
+    const user = await this.signupUsecaseProxy.getInstance().execute(auth.username, auth.password);
+
+    const accessTokenCookie = await this.loginUsecaseProxy
+      .getInstance()
+      .getCookieWithJwtToken(user.username);
+    const refreshTokenCookie = await this.loginUsecaseProxy
+      .getInstance()
+      .getCookieWithJwtRefreshToken(user.username);
+
+    request.res.setHeader('Set-Cookie', [accessTokenCookie, refreshTokenCookie]);
+    return 'Signup successful';
+  }
+
   @Post('login')
   @UseGuards(LoginGuard)
   @ApiBearerAuth()
   @ApiBody({ type: AuthLoginDto })
   @ApiOperation({ description: 'login' })
-  async login(@Body() auth: AuthLoginDto, @Request() request: any) {
+  async login(@Body() { username }: AuthLoginDto, @Request() request: any) {
     const accessTokenCookie = await this.loginUsecaseProxy
       .getInstance()
-      .getCookieWithJwtToken(auth.username);
+      .getCookieWithJwtToken(username);
     const refreshTokenCookie = await this.loginUsecaseProxy
       .getInstance()
-      .getCookieWithJwtRefreshToken(auth.username);
-    request.res.setHeader('Set-Cookie', [
-      accessTokenCookie,
-      refreshTokenCookie,
-    ]);
+      .getCookieWithJwtRefreshToken(username);
+    request.res.setHeader('Set-Cookie', [accessTokenCookie, refreshTokenCookie]);
     return 'Login successful';
   }
 
@@ -82,9 +91,7 @@ export class AuthController {
   @ApiOperation({ description: 'is_authenticated' })
   @ApiResponseType(IsAuthPresenter, false)
   async isAuthenticated(@Req() request: any) {
-    const user = await this.isAuthUsecaseProxy
-      .getInstance()
-      .execute(request.user.username);
+    const user = await this.isAuthUsecaseProxy.getInstance().execute(request.user.username);
     const response = new IsAuthPresenter();
     response.username = user.username;
     return response;

@@ -23,13 +23,15 @@
     "typeorm:create": "npm run typeorm migration:create",
     "typeorm:run": "npm run typeorm migration:run",
     "typeorm:revert": "npm run typeorm migration:revert",
-    "start:docker": "npm run docker:db && npm run docker:build && npm run docker:up",
-    "stop:docker": "npm run docker:down",
+    "start:docker": "npm run docker:up",
+    "stop:docker": "npm run docker:stop",
     "docker:db": "docker compose --env-file .env -f docker/docker-compose.yml up -d taxi-24-db",
     "docker:build": "docker compose --env-file .env -f docker/docker-compose.yml build taxi-24-api",
     "docker:up": "docker compose --env-file .env -f docker/docker-compose.yml up -d taxi-24-api",
-    "docker:down": "docker compose --env-file .env -f docker/docker-compose.yml down",
-    "docker:logs": "docker compose --env-file .env -f docker/docker-compose.yml logs -f taxi-24-api"
+    "docker:down": "docker compose --env-file .env -f docker/docker-compose.yml down -v --remove-orphans",
+    "docker:stop": "docker compose --env-file .env -f docker/docker-compose.yml down",
+    "docker:logs:api": "docker compose --env-file .env -f docker/docker-compose.yml logs -f taxi-24-api",
+    "docker:logs:db": "docker compose --env-file .env -f docker/docker-compose.yml logs -f taxi-24-db"
   },
   "dependencies": {
     "@nestjs/common": "^10.0.0",

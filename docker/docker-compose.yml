@@ -1,12 +1,14 @@
 services:
   taxi-24-db:
-    image: postgres
+    image: postgis/postgis
+    platform: linux/amd64
     environment:
       POSTGRES_USER: ${DB_USER}
       POSTGRES_PASSWORD: ${DB_PASS}
       POSTGRES_DB: ${DB_NAME}
     volumes:
       - db_data:/var/lib/postgresql/data
+      - ./init-db.sh:/docker-entrypoint-initdb.d/init-db.sh
     ports:
       - "${DB_PORT}:${DB_PORT}"
     networks:

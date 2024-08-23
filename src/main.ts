@@ -32,12 +32,11 @@ import { Environment } from 'src/infrastructure/config/environment-config/enviro
   // Base route
   app.setGlobalPrefix('v1');
 
-  // swagger config
+  // Swagger config
   if (process.env.NODE_ENV !== Environment.Production) {
     const config = new DocumentBuilder()
       .addBearerAuth()
       .setTitle('Taxi24 API')
-      .setDescription('Example with todo list')
       .setVersion('1.0')
       .build();
 

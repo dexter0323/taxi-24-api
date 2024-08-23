@@ -6,7 +6,7 @@ import { ILogger } from '../../../domain/logger/logger.interface';
 import { UserM } from '../../../domain/model/user';
 import { UserRepository } from '../../../domain/repositories/userRepository.interface';
 import { IsAuthenticatedUseCases } from '../isAuthenticated.usecases';
-import { LoginUseCases } from '../login.usecases';
+import { LoginUseCases } from '../signup.usecases';
 import { LogoutUseCases } from '../logout.usecases';
 
 describe('uses_cases/authentication', () => {
@@ -81,7 +81,9 @@ describe('uses_cases/authentication', () => {
     it('should return null because user not found', async () => {
       (adminUserRepo.getUserByUsername as jest.Mock).mockReturnValue(Promise.resolve(null));
 
-      expect(await loginUseCases.validateUserForLocalStragtegy('username', 'password')).toEqual(null);
+      expect(await loginUseCases.validateUserForLocalStragtegy('username', 'password')).toEqual(
+        null,
+      );
     });
     it('should return null because wrong password', async () => {
       const user: UserM = {
@@ -96,7 +98,9 @@ describe('uses_cases/authentication', () => {
       (adminUserRepo.getUserByUsername as jest.Mock).mockReturnValue(Promise.resolve(user));
       (bcryptService.compare as jest.Mock).mockReturnValue(Promise.resolve(false));
 
-      expect(await loginUseCases.validateUserForLocalStragtegy('username', 'password')).toEqual(null);
+      expect(await loginUseCases.validateUserForLocalStragtegy('username', 'password')).toEqual(
+        null,
+      );
     });
     it('should return user without password', async () => {
       const user: UserM = {
@@ -113,7 +117,9 @@ describe('uses_cases/authentication', () => {
 
       const { password, ...rest } = user;
 
-      expect(await loginUseCases.validateUserForLocalStragtegy('username', 'password')).toEqual(rest);
+      expect(await loginUseCases.validateUserForLocalStragtegy('username', 'password')).toEqual(
+        rest,
+      );
     });
   });
 
@@ -145,7 +151,9 @@ describe('uses_cases/authentication', () => {
     it('should return null because user not found', async () => {
       (adminUserRepo.getUserByUsername as jest.Mock).mockReturnValue(Promise.resolve(null));
 
-      expect(await loginUseCases.getUserIfRefreshTokenMatches('refresh token', 'username')).toEqual(null);
+      expect(await loginUseCases.getUserIfRefreshTokenMatches('refresh token', 'username')).toEqual(
+        null,
+      );
     });
 
     it('should return null because user not found', async () => {
@@ -161,7 +169,9 @@ describe('uses_cases/authentication', () => {
       (adminUserRepo.getUserByUsername as jest.Mock).mockReturnValue(Promise.resolve(user));
       (bcryptService.compare as jest.Mock).mockReturnValue(Promise.resolve(false));
 
-      expect(await loginUseCases.getUserIfRefreshTokenMatches('refresh token', 'username')).toEqual(null);
+      expect(await loginUseCases.getUserIfRefreshTokenMatches('refresh token', 'username')).toEqual(
+        null,
+      );
     });
 
     it('should return user', async () => {
@@ -177,7 +187,9 @@ describe('uses_cases/authentication', () => {
       (adminUserRepo.getUserByUsername as jest.Mock).mockReturnValue(Promise.resolve(user));
       (bcryptService.compare as jest.Mock).mockReturnValue(Promise.resolve(true));
 
-      expect(await loginUseCases.getUserIfRefreshTokenMatches('refresh token', 'username')).toEqual(user);
+      expect(await loginUseCases.getUserIfRefreshTokenMatches('refresh token', 'username')).toEqual(
+        user,
+      );
     });
   });
 

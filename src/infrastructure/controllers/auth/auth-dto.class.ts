@@ -12,3 +12,15 @@ export class AuthLoginDto {
   @IsString()
   readonly password: string;
 }
+
+export class AuthSignUpDto {
+  @ApiProperty({ required: true })
+  @IsNotEmpty()
+  @IsString()
+  readonly username: string;
+
+  @ApiProperty({ required: true })
+  @IsNotEmpty()
+  @IsString()
+  readonly password: string;
+}
