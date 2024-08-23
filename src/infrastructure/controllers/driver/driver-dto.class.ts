@@ -12,7 +12,7 @@ export class DriverWithinRadiusDto {
   @IsNumberString()
   readonly latitude: string;
 
-  @ApiProperty({ required: false, default: 3 })
+  @ApiProperty({ required: false, default: 3, description: 'Radius in kilometers' })
   @IsNumberString()
   readonly radius: string;
 }

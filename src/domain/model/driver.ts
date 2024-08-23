@@ -9,6 +9,7 @@ export class DriverM {
   status: DriverStatus;
   longitude: number;
   latitude: number;
+  distance?: string;
   createdDate: Date;
   updatedDate: Date;
 }

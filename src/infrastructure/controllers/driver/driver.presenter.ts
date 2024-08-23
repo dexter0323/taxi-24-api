@@ -11,6 +11,8 @@ export class DriverPresenter {
   @ApiProperty()
   longitude: number;
   @ApiProperty()
+  distance?: string;
+  @ApiProperty()
   createdate: Date;
   @ApiProperty()
   updateddate: Date;
@@ -20,6 +22,7 @@ export class DriverPresenter {
     this.status = driver.status;
     this.latitude = driver.latitude;
     this.longitude = driver.longitude;
+    this.distance = driver.distance;
     this.createdate = driver.createdDate;
     this.updateddate = driver.updatedDate;
   }

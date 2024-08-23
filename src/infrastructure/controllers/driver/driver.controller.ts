@@ -58,6 +58,9 @@ export class DriverController {
     const drivers = await this.getDriversAvailableWithinRadiusUsecaseProxy
       .getInstance()
       .execute(longitude, latitude, radius);
+
+    console.log('drivers', drivers);
+
     return drivers.map(driver => new DriverPresenter(driver));
   }
 }

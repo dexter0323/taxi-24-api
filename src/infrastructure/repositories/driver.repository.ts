@@ -35,17 +35,37 @@ export class DatabaseDriverRepository implements DriverRepository {
     latitude: number,
     radius: number,
   ): Promise<DriverM[]> {
+    /** SRID for the WGS 84 coordinate system, used for GPS coordinates */
+    const SRID_WGS84 = 4326;
+
     const drivers = await this.driverEntityRepository
       .createQueryBuilder('driver')
+      .select([
+        'driver.id AS id',
+        'driver.status AS status',
+        'driver.longitude AS longitude',
+        'driver.latitude AS latitude',
+        'driver.createdate AS created_date',
+        'driver.updateddate AS updated_date',
+        `TO_CHAR(
+        ST_Distance(
+          geography(ST_SetSRID(ST_MakePoint(driver.longitude, driver.latitude), ${SRID_WGS84})),
+          geography(ST_SetSRID(ST_MakePoint(:longitude, :latitude), ${SRID_WGS84}))
+        ) / 1000, 'FM999999990.00'
+      ) || ' km' AS distance`,
+      ])
       .where('driver.status = :status', { status: DriverStatus.AVAILABLE })
       .andWhere(
         `ST_Distance(
-        geography(ST_SetSRID(ST_MakePoint(driver.longitude, driver.latitude), 4326)),
-        geography(ST_SetSRID(ST_MakePoint(:longitude, :latitude), 4326))
+        geography(ST_SetSRID(ST_MakePoint(driver.longitude, driver.latitude), ${SRID_WGS84})),
+        geography(ST_SetSRID(ST_MakePoint(:longitude, :latitude), ${SRID_WGS84}))
       ) <= :radius * 1000`,
         { longitude, latitude, radius },
       )
-      .getMany();
+      .orderBy('distance', 'ASC')
+      .setParameters({ longitude, latitude })
+      .getRawMany();
+
     return drivers.map(this.toDriver);
   }
 
@@ -60,7 +80,7 @@ export class DatabaseDriverRepository implements DriverRepository {
     throw new Error('Method not implemented.');
   }
 
-  private toDriver(driverEntity: Driver): DriverM {
+  private toDriver(driverEntity: Driver & { distance?: string }): DriverM {
     const driver: DriverM = new DriverM();
 
     driver.id = driverEntity.id;
@@ -70,7 +90,7 @@ export class DatabaseDriverRepository implements DriverRepository {
     driver.createdDate = driverEntity.created_date;
     driver.updatedDate = driverEntity.updated_date;
 
-    return driver;
+    return { ...driver, ...(driverEntity.distance ? { distance: driverEntity.distance } : {}) };
   }
 
   private toDriverEntity(driverEntity: DriverM): Driver {
