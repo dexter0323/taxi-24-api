@@ -1,9 +1,9 @@
 import {
-  Entity,
   Column,
-  PrimaryGeneratedColumn,
-  Index,
   CreateDateColumn,
+  Entity,
+  Index,
+  PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from 'typeorm';
 
@@ -19,11 +19,11 @@ export class User {
   @Column('text')
   password: string;
 
-  @CreateDateColumn({ name: 'createdate' })
-  createdate: Date;
+  @CreateDateColumn()
+  created_date: Date;
 
-  @UpdateDateColumn({ name: 'updateddate' })
-  updateddate: Date;
+  @UpdateDateColumn()
+  updated_date: Date;
 
   @Column({ nullable: true })
   last_login?: Date;

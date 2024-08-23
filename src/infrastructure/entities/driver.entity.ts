@@ -26,9 +26,9 @@ export class Driver {
   @Column('decimal', { precision: 10, scale: 7, default: 0 })
   latitude: number;
 
-  @CreateDateColumn({ name: 'createdate' })
+  @CreateDateColumn()
   created_date: Date;
 
-  @UpdateDateColumn({ name: 'updateddate' })
+  @UpdateDateColumn()
   updated_date: Date;
 }

@@ -6,6 +6,7 @@ import { ExceptionsModule } from 'src/infrastructure/exceptions/exceptions.modul
 import { LoggerModule } from 'src/infrastructure/logger/logger.module';
 import { LoggerService } from 'src/infrastructure/logger/logger.service';
 import { DatabaseDriverRepository } from 'src/infrastructure/repositories/driver.repository';
+import { DatabasePassengerRepository } from 'src/infrastructure/repositories/passenger.repository';
 import { RepositoriesModule } from 'src/infrastructure/repositories/repositories.module';
 import { DatabaseUserRepository } from 'src/infrastructure/repositories/user.repository';
 import { BcryptModule } from 'src/infrastructure/services/bcrypt/bcrypt.module';
@@ -20,7 +21,10 @@ import { SignUpUseCases } from 'src/usecases/auth/signup.usecases';
 import { GetDriverUseCases } from 'src/usecases/driver/getDriver.usecases';
 import { GetDriversUseCases } from 'src/usecases/driver/getDrivers.usecases';
 import { GetDriversAvailableUseCases } from 'src/usecases/driver/getDriversAvailable.usecases';
-import { GetDriversAvailableWithin3kmUseCases } from 'src/usecases/driver/getDriversAvailableWithinRadius.usecases';
+import { GetDriversAvailableWithinRadiusUseCases } from 'src/usecases/driver/getDriversAvailableWithinRadius.usecases';
+import { GetPassengerUseCases } from 'src/usecases/passenger/getPassenger.usecases';
+import { GetPassengersUseCases } from 'src/usecases/passenger/getPassengers.usecases';
+import { PassengerRequestTripUseCases } from 'src/usecases/passenger/passengerRequestTrip.usecases';
 
 @Module({
   imports: [
@@ -51,6 +55,14 @@ export class UsecasesProxyModule {
    */
   static GET_DRIVERS_AVAILABLE_WITHIN_RADIUS_USECASES_PROXY =
     'getDriversAvailableWithinRadiusUsecasesProxy';
+
+  // Passenger
+  /** Obtener un pasajero específico por ID */
+  static GET_PASSENGER_USECASES_PROXY = 'getPassengerUsecasesProxy';
+  /** Obtenga una lista de todos los pasajeros */
+  static GET_PASSENGERS_USECASES_PROXY = 'getPassengersUsecasesProxy';
+  /** Para un pasajero solicitando un viaje, obtenga una lista de los 3 conductores más cercanos al punto de partida */
+  static PASSENGER_REQUEST_TRIP_USECASES_PROXY = 'passengerRequestTripUsecasesProxy';
 
   static register(): DynamicModule {
     return {
@@ -93,6 +105,7 @@ export class UsecasesProxyModule {
           provide: UsecasesProxyModule.LOGOUT_USECASES_PROXY,
           useFactory: () => new UseCaseProxy(new LogoutUseCases()),
         },
+
         {
           inject: [LoggerService, DatabaseDriverRepository],
           provide: UsecasesProxyModule.GET_DRIVER_USECASES_PROXY,
@@ -115,7 +128,26 @@ export class UsecasesProxyModule {
           inject: [LoggerService, DatabaseDriverRepository],
           provide: UsecasesProxyModule.GET_DRIVERS_AVAILABLE_WITHIN_RADIUS_USECASES_PROXY,
           useFactory: (logger: LoggerService, driverRepository: DatabaseDriverRepository) =>
-            new UseCaseProxy(new GetDriversAvailableWithin3kmUseCases(logger, driverRepository)),
+            new UseCaseProxy(new GetDriversAvailableWithinRadiusUseCases(logger, driverRepository)),
+        },
+
+        {
+          inject: [LoggerService, DatabasePassengerRepository],
+          provide: UsecasesProxyModule.GET_PASSENGER_USECASES_PROXY,
+          useFactory: (logger: LoggerService, passengerRepository: DatabasePassengerRepository) =>
+            new UseCaseProxy(new GetPassengerUseCases(logger, passengerRepository)),
+        },
+        {
+          inject: [LoggerService, DatabasePassengerRepository],
+          provide: UsecasesProxyModule.GET_PASSENGERS_USECASES_PROXY,
+          useFactory: (logger: LoggerService, passengerRepository: DatabasePassengerRepository) =>
+            new UseCaseProxy(new GetPassengersUseCases(logger, passengerRepository)),
+        },
+        {
+          inject: [LoggerService, DatabasePassengerRepository],
+          provide: UsecasesProxyModule.PASSENGER_REQUEST_TRIP_USECASES_PROXY,
+          useFactory: (logger: LoggerService, passengerRepository: DatabasePassengerRepository) =>
+            new UseCaseProxy(new PassengerRequestTripUseCases(logger, passengerRepository)),
         },
       ],
       exports: [
@@ -128,6 +160,10 @@ export class UsecasesProxyModule {
         UsecasesProxyModule.GET_DRIVERS_USECASES_PROXY,
         UsecasesProxyModule.GET_DRIVERS_AVAILABLE_USECASES_PROXY,
         UsecasesProxyModule.GET_DRIVERS_AVAILABLE_WITHIN_RADIUS_USECASES_PROXY,
+
+        UsecasesProxyModule.GET_PASSENGER_USECASES_PROXY,
+        UsecasesProxyModule.GET_PASSENGERS_USECASES_PROXY,
+        UsecasesProxyModule.PASSENGER_REQUEST_TRIP_USECASES_PROXY,
       ],
     };
   }

@@ -45,8 +45,8 @@ export class DatabaseDriverRepository implements DriverRepository {
         'driver.status AS status',
         'driver.longitude AS longitude',
         'driver.latitude AS latitude',
-        'driver.createdate AS created_date',
-        'driver.updateddate AS updated_date',
+        'driver.created_date AS created_date',
+        'driver.updated_date AS updated_date',
         `TO_CHAR(
         ST_Distance(
           geography(ST_SetSRID(ST_MakePoint(driver.longitude, driver.latitude), ${SRID_WGS84})),
@@ -80,7 +80,7 @@ export class DatabaseDriverRepository implements DriverRepository {
   }
 
   private toDriver(driverEntity: Driver & { distance?: string }): DriverM {
-    const driver: DriverM = new DriverM();
+    const driver = new DriverM();
 
     driver.id = driverEntity.id;
     driver.status = driverEntity.status;
@@ -92,14 +92,14 @@ export class DatabaseDriverRepository implements DriverRepository {
     return { ...driver, ...(driverEntity.distance ? { distance: driverEntity.distance } : {}) };
   }
 
-  private toDriverEntity(driverEntity: DriverM): Driver {
-    const driver: Driver = new Driver();
+  private toDriverEntity(driver: DriverM): Driver {
+    const driverEntity = new Driver();
 
-    driver.id = driverEntity.id;
-    driver.status = driverEntity.status;
-    driver.longitude = driverEntity.longitude;
-    driver.latitude = driverEntity.latitude;
+    driverEntity.id = driver.id;
+    driverEntity.status = driver.status;
+    driverEntity.longitude = driver.longitude;
+    driverEntity.latitude = driver.latitude;
 
-    return driver;
+    return driverEntity;
   }
 }

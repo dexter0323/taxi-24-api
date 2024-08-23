@@ -60,8 +60,8 @@ export class DatabaseUserRepository implements UserRepository {
     adminUser.password = adminUserEntity.password;
     adminUser.lastLogin = adminUserEntity.last_login;
     adminUser.hashRefreshToken = adminUserEntity.hach_refresh_token;
-    adminUser.createDate = adminUserEntity.createdate;
-    adminUser.updatedDate = adminUserEntity.updateddate;
+    adminUser.createDate = adminUserEntity.created_date;
+    adminUser.updatedDate = adminUserEntity.updated_date;
 
     return adminUser;
   }

@@ -6,7 +6,7 @@ import { DriverPresenter } from 'src/infrastructure/controllers/driver/driver.pr
 import { UseCaseProxy } from 'src/infrastructure/usecases-proxy/usecases-proxy';
 import { UsecasesProxyModule } from 'src/infrastructure/usecases-proxy/usecases-proxy.module';
 import { GetDriversAvailableUseCases } from 'src/usecases/driver/getDriversAvailable.usecases';
-import { GetDriversAvailableWithin3kmUseCases as GetDriversAvailableWithinRadiusUseCases } from 'src/usecases/driver/getDriversAvailableWithinRadius.usecases';
+import { GetDriversAvailableWithinRadiusUseCases as GetDriversAvailableWithinRadiusUseCases } from 'src/usecases/driver/getDriversAvailableWithinRadius.usecases';
 import { GetDriverUseCases } from 'src/usecases/driver/getDriver.usecases';
 import { GetDriversUseCases } from 'src/usecases/driver/getDrivers.usecases';
 import { DriverWithinRadiusDto } from 'src/infrastructure/controllers/driver/driver-dto.class';
