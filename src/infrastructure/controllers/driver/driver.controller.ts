@@ -1,4 +1,4 @@
-import { Body, Controller, Get, Inject, ParseIntPipe, Query } from '@nestjs/common';
+import { Body, Controller, Get, Inject, Param, ParseIntPipe, Query } from '@nestjs/common';
 import { ApiBody, ApiExtraModels, ApiResponse, ApiTags } from '@nestjs/swagger';
 
 import { ApiResponseType } from 'src/infrastructure/common/swagger/response.decorator';
@@ -11,7 +11,7 @@ import { GetDriverUseCases } from 'src/usecases/driver/getDriver.usecases';
 import { GetDriversUseCases } from 'src/usecases/driver/getDrivers.usecases';
 import { DriverWithinRadiusDto } from 'src/infrastructure/controllers/driver/driver-dto.class';
 
-@Controller()
+@Controller('driver')
 @ApiTags('driver')
 @ApiResponse({ status: 500, description: 'Internal error' })
 @ApiExtraModels(DriverPresenter)
@@ -27,28 +27,28 @@ export class DriverController {
     private readonly getDriversAvailableWithinRadiusUsecaseProxy: UseCaseProxy<GetDriversAvailableWithinRadiusUseCases>,
   ) {}
 
-  @Get('driver')
+  @Get(':id')
   @ApiResponseType(DriverPresenter, false)
-  async getDriver(@Query('id', ParseIntPipe) id: number) {
+  async getDriver(@Param('id', ParseIntPipe) id: number) {
     const driver = await this.getDriverUsecaseProxy.getInstance().execute(id);
     return new DriverPresenter(driver);
   }
 
-  @Get('drivers')
+  @Get()
   @ApiResponseType(DriverPresenter, true)
   async getDrivers() {
     const drivers = await this.getDriversUsecaseProxy.getInstance().execute();
     return drivers.map(driver => new DriverPresenter(driver));
   }
 
-  @Get('drivers-available')
+  @Get('available')
   @ApiResponseType(DriverPresenter, true)
   async getDriversAvailable() {
     const drivers = await this.getDriversAvailableUsecaseProxy.getInstance().execute();
     return drivers.map(driver => new DriverPresenter(driver));
   }
 
-  @Get('drivers-available-within-radius')
+  @Get('available-within-radius')
   @ApiResponseType(DriverPresenter, true)
   async getDriversAvailableWithinRadius(@Query() driverWithinRadiusDto: DriverWithinRadiusDto) {
     const longitude = parseFloat(driverWithinRadiusDto.longitude);

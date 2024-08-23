@@ -1,12 +1,10 @@
 import {
-  Entity,
   Column,
-  PrimaryGeneratedColumn,
   CreateDateColumn,
+  Entity,
+  PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from 'typeorm';
-
-import { DriverStatus } from 'src/domain/model/driver';
 
 @Entity('passengers')
 export class Passenger {

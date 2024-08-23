@@ -6,62 +6,34 @@ import { PassengerRepository } from 'src/domain/repositories/passengerRepository
 import { PassengerM } from 'src/domain/model/passenger';
 import { Passenger } from 'src/infrastructure/entities/passenger.entity';
 import { DriverM } from 'src/domain/model/driver';
+import { Driver } from 'src/infrastructure/entities/driver.entity';
+import { DatabaseDriverRepository } from 'src/infrastructure/repositories/driver.repository';
 
 @Injectable()
 export class DatabasePassengerRepository implements PassengerRepository {
   constructor(
     @InjectRepository(Passenger)
-    private readonly driverEntityRepository: Repository<Passenger>,
+    private readonly passengerEntityRepository: Repository<Passenger>,
+    private readonly driverRepository: DatabaseDriverRepository,
   ) {}
 
   async findById(id: number): Promise<PassengerM> {
-    const driver = await this.driverEntityRepository.findOneByOrFail({ id });
+    const driver = await this.passengerEntityRepository.findOneByOrFail({ id });
     return this.toDriver(driver);
   }
 
   async findAll(): Promise<PassengerM[]> {
-    const drivers = await this.driverEntityRepository.find();
+    const drivers = await this.passengerEntityRepository.find();
     return drivers.map(this.toDriver);
   }
 
   async requestTrip(id: number, longitude: number, latitude: number): Promise<DriverM[]> {
-    /** SRID for the WGS 84 coordinate system, used for GPS coordinates */
-    const SRID_WGS84 = 4326;
-
-    const drivers = await this.driverEntityRepository
-      .createQueryBuilder('passenger')
-      .select([
-        'driver.id AS id',
-        'driver.status AS status',
-        'driver.longitude AS longitude',
-        'driver.latitude AS latitude',
-        'driver.created_date AS created_date',
-        'driver.updated_date AS updated_date',
-        `TO_CHAR(
-        ST_Distance(
-          geography(ST_SetSRID(ST_MakePoint(driver.longitude, driver.latitude), ${SRID_WGS84})),
-          geography(ST_SetSRID(ST_MakePoint(:longitude, :latitude), ${SRID_WGS84}))
-        ) / 1000, 'FM999999990.00'
-      ) || ' km' AS distance`,
-      ])
-      // .where('driver.status = :status', { status: DriverStatus.AVAILABLE })
-      .andWhere(
-        `ST_Distance(
-        geography(ST_SetSRID(ST_MakePoint(driver.longitude, driver.latitude), ${SRID_WGS84})),
-        geography(ST_SetSRID(ST_MakePoint(:longitude, :latitude), ${SRID_WGS84}))
-      ) <= :radius * 1000`,
-        { longitude, latitude },
-      )
-      .orderBy('distance', 'ASC')
-      .setParameters({ longitude, latitude })
-      .getRawMany();
-
-    return [] as any;
+    return await this.driverRepository.findNearestDrivers(longitude, latitude);
   }
 
   async insert(driver: PassengerM): Promise<PassengerM> {
     const todoEntity = this.toDriverEntity(driver);
-    const result = await this.driverEntityRepository.insert(todoEntity);
+    const result = await this.passengerEntityRepository.insert(todoEntity);
     return this.toDriver(result.generatedMaps[0] as Passenger);
   }
 

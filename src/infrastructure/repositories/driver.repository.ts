@@ -1,11 +1,13 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
+import { EntityRepository, Repository } from 'typeorm';
 
 import { DriverM, DriverStatus } from 'src/domain/model/driver';
 import { DriverRepository } from 'src/domain/repositories/driverRepository.interface';
 import { Driver } from 'src/infrastructure/entities/driver.entity';
 
+/** SRID for the WGS 84 coordinate system, used for GPS coordinates */
+const SRID_WGS84 = 4326;
 @Injectable()
 export class DatabaseDriverRepository implements DriverRepository {
   constructor(
@@ -36,7 +38,6 @@ export class DatabaseDriverRepository implements DriverRepository {
     radius: number,
   ): Promise<DriverM[]> {
     /** SRID for the WGS 84 coordinate system, used for GPS coordinates */
-    const SRID_WGS84 = 4326;
 
     const drivers = await this.driverEntityRepository
       .createQueryBuilder('driver')
@@ -63,6 +64,36 @@ export class DatabaseDriverRepository implements DriverRepository {
         { longitude, latitude, radius },
       )
       .orderBy('distance', 'ASC')
+      .setParameters({ longitude, latitude })
+      .getRawMany();
+
+    return drivers.map(this.toDriver);
+  }
+
+  async findNearestDrivers(
+    longitude: number,
+    latitude: number,
+    limit: number = 3,
+  ): Promise<DriverM[]> {
+    const drivers = await this.driverEntityRepository
+      .createQueryBuilder('driver')
+      .select([
+        'driver.id AS id',
+        'driver.status AS status',
+        'driver.longitude AS longitude',
+        'driver.latitude AS latitude',
+        'driver.created_date AS created_date',
+        'driver.updated_date AS updated_date',
+        `TO_CHAR(
+          ST_Distance(
+            geography(ST_SetSRID(ST_MakePoint(driver.longitude, driver.latitude), ${SRID_WGS84})),
+            geography(ST_SetSRID(ST_MakePoint(:longitude, :latitude), ${SRID_WGS84}))
+          ) / 1000, 'FM999999990.00'
+        ) || ' km' AS distance`,
+      ])
+      .where('driver.status = :status', { status: DriverStatus.AVAILABLE })
+      .orderBy('distance', 'ASC')
+      .limit(limit)
       .setParameters({ longitude, latitude })
       .getRawMany();
 

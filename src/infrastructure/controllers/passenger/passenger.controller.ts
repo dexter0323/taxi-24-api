@@ -1,4 +1,4 @@
-import { Body, Controller, Get, Inject, ParseIntPipe, Query } from '@nestjs/common';
+import { Body, Controller, Get, Inject, Param, ParseIntPipe, Query } from '@nestjs/common';
 import { ApiBody, ApiExtraModels, ApiResponse, ApiTags } from '@nestjs/swagger';
 
 import { ApiResponseType } from 'src/infrastructure/common/swagger/response.decorator';
@@ -16,7 +16,7 @@ import { PassengerRequestTripUseCases } from 'src/usecases/passenger/passengerRe
 import { PassengerPresenter } from 'src/infrastructure/controllers/passenger/passenger.presenter';
 import { RequestTripDto as PassengerRequestTripDto } from 'src/infrastructure/controllers/passenger/passenger-dto.class';
 
-@Controller()
+@Controller('passenger')
 @ApiTags('passenger')
 @ApiResponse({ status: 500, description: 'Internal error' })
 @ApiExtraModels(PassengerPresenter)
@@ -30,29 +30,32 @@ export class PassengerController {
     private readonly passengerRequestTripUseCaseUsecaseProxy: UseCaseProxy<PassengerRequestTripUseCases>,
   ) {}
 
-  @Get('passenger')
+  @Get(':id')
   @ApiResponseType(PassengerPresenter, false)
-  async getDriver(@Query('id', ParseIntPipe) id: number) {
+  async getDriver(@Param('id', ParseIntPipe) id: number) {
     const passenger = await this.getPassengerUsecaseProxy.getInstance().execute(id);
     return new PassengerPresenter(passenger);
   }
 
-  @Get('passengers')
+  @Get()
   @ApiResponseType(PassengerPresenter, true)
   async getDrivers() {
     const passengers = await this.getPassengersUsecaseProxy.getInstance().execute();
     return passengers.map(passenger => new PassengerPresenter(passenger));
   }
 
-  @Get('passengers-request-trip')
+  @Get(':id/request-trip')
   @ApiResponseType(DriverPresenter, true)
-  async passengerRequestTrip(@Query() passengerRequestTripDto: PassengerRequestTripDto) {
+  async passengerRequestTrip(
+    @Param('id', ParseIntPipe) id: number,
+    @Query() passengerRequestTripDto: PassengerRequestTripDto,
+  ) {
     const longitude = parseFloat(passengerRequestTripDto.longitude);
     const latitude = parseFloat(passengerRequestTripDto.latitude);
 
     const drivers = await this.passengerRequestTripUseCaseUsecaseProxy
       .getInstance()
-      .execute(passengerRequestTripDto.id, longitude, latitude);
+      .execute(id, longitude, latitude);
 
     return drivers.map(driver => new DriverPresenter(driver));
   }
