@@ -8,7 +8,7 @@ export class GetDriversAvailableWithinRadiusUseCases {
     private readonly driverRepository: DriverRepository,
   ) {}
 
-  async execute(longitud: number, latitude: number, radius: number): Promise<DriverM[]> {
-    return await this.driverRepository.findAllAvailableWithinRadius(longitud, latitude, radius);
+  async execute(latitude: number, longitud: number, radius: number): Promise<DriverM[]> {
+    return await this.driverRepository.findAllAvailableWithinRadius(latitude, longitud, radius);
   }
 }

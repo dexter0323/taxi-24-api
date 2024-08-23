@@ -19,12 +19,12 @@ export class DatabasePassengerRepository implements PassengerRepository {
 
   async findById(id: number): Promise<PassengerM> {
     const driver = await this.passengerEntityRepository.findOneByOrFail({ id });
-    return this.toDriver(driver);
+    return this.toPassenger(driver);
   }
 
   async findAll(): Promise<PassengerM[]> {
     const drivers = await this.passengerEntityRepository.find();
-    return drivers.map(this.toDriver);
+    return drivers.map(this.toPassenger);
   }
 
   async requestTrip(id: number, longitude: number, latitude: number): Promise<DriverM[]> {
@@ -32,16 +32,16 @@ export class DatabasePassengerRepository implements PassengerRepository {
   }
 
   async insert(driver: PassengerM): Promise<PassengerM> {
-    const todoEntity = this.toDriverEntity(driver);
+    const todoEntity = this.toPassengerEntity(driver);
     const result = await this.passengerEntityRepository.insert(todoEntity);
-    return this.toDriver(result.generatedMaps[0] as Passenger);
+    return this.toPassenger(result.generatedMaps[0] as Passenger);
   }
 
   deleteById(id: number): Promise<void> {
     throw new Error('Method not implemented.');
   }
 
-  private toDriver(passengerEntity: Passenger): PassengerM {
+  private toPassenger(passengerEntity: Passenger): PassengerM {
     const passenger = new PassengerM();
 
     passenger.id = passengerEntity.id;
@@ -53,7 +53,7 @@ export class DatabasePassengerRepository implements PassengerRepository {
     return passenger;
   }
 
-  private toDriverEntity(passenger: PassengerM): Passenger {
+  private toPassengerEntity(passenger: PassengerM): Passenger {
     const passengerEntity = new Passenger();
 
     passengerEntity.id = passenger.id;

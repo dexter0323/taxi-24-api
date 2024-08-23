@@ -23,7 +23,7 @@ import { LoginUseCases } from 'src/usecases/auth/login.usecases';
 import { SignUpUseCases as SignupUseCases } from 'src/usecases/auth/signup.usecases';
 
 @Controller('auth')
-@ApiTags('auth')
+@ApiTags('Auth')
 @ApiResponse({
   status: 401,
   description: 'No authorization token was found',

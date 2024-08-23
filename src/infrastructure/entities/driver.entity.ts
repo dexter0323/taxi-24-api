@@ -21,10 +21,10 @@ export class Driver {
   status: DriverStatus;
 
   @Column('decimal', { precision: 10, scale: 7, default: 0 })
-  longitude: number;
+  latitude: number;
 
   @Column('decimal', { precision: 10, scale: 7, default: 0 })
-  latitude: number;
+  longitude: number;
 
   @CreateDateColumn()
   created_date: Date;

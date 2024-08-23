@@ -1,18 +1,21 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { IsNotEmpty, IsNumber, IsNumberString } from 'class-validator';
+import { IsNotEmpty, IsNumber, IsNumberString, IsString } from 'class-validator';
 
 export class DriverWithinRadiusDto {
   @ApiProperty({ required: true })
   @IsNotEmpty()
   @IsNumberString()
-  readonly longitude: string;
+  @IsString()
+  readonly latitude: string;
 
   @ApiProperty({ required: true })
   @IsNotEmpty()
   @IsNumberString()
-  readonly latitude: string;
+  @IsString()
+  readonly longitude: string;
 
   @ApiProperty({ required: false, default: 3, description: 'Radius in kilometers' })
   @IsNumberString()
+  @IsString()
   readonly radius: string;
 }

@@ -7,8 +7,8 @@ export enum DriverStatus {
 export class DriverM {
   id: number;
   status: DriverStatus;
-  longitude: number;
   latitude: number;
+  longitude: number;
   distance?: string;
   createdDate: Date;
   updatedDate: Date;

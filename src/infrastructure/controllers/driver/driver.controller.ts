@@ -6,13 +6,13 @@ import { DriverPresenter } from 'src/infrastructure/controllers/driver/driver.pr
 import { UseCaseProxy } from 'src/infrastructure/usecases-proxy/usecases-proxy';
 import { UsecasesProxyModule } from 'src/infrastructure/usecases-proxy/usecases-proxy.module';
 import { GetDriversAvailableUseCases } from 'src/usecases/driver/getDriversAvailable.usecases';
-import { GetDriversAvailableWithinRadiusUseCases as GetDriversAvailableWithinRadiusUseCases } from 'src/usecases/driver/getDriversAvailableWithinRadius.usecases';
+import { GetDriversAvailableWithinRadiusUseCases } from 'src/usecases/driver/getDriversAvailableWithinRadius.usecases';
 import { GetDriverUseCases } from 'src/usecases/driver/getDriver.usecases';
 import { GetDriversUseCases } from 'src/usecases/driver/getDrivers.usecases';
 import { DriverWithinRadiusDto } from 'src/infrastructure/controllers/driver/driver-dto.class';
 
 @Controller('driver')
-@ApiTags('driver')
+@ApiTags('Driver')
 @ApiResponse({ status: 500, description: 'Internal error' })
 @ApiExtraModels(DriverPresenter)
 export class DriverController {
@@ -26,13 +26,6 @@ export class DriverController {
     @Inject(UsecasesProxyModule.GET_DRIVERS_AVAILABLE_WITHIN_RADIUS_USECASES_PROXY)
     private readonly getDriversAvailableWithinRadiusUsecaseProxy: UseCaseProxy<GetDriversAvailableWithinRadiusUseCases>,
   ) {}
-
-  @Get(':id')
-  @ApiResponseType(DriverPresenter, false)
-  async getDriver(@Param('id', ParseIntPipe) id: number) {
-    const driver = await this.getDriverUsecaseProxy.getInstance().execute(id);
-    return new DriverPresenter(driver);
-  }
 
   @Get()
   @ApiResponseType(DriverPresenter, true)
@@ -51,14 +44,21 @@ export class DriverController {
   @Get('available-within-radius')
   @ApiResponseType(DriverPresenter, true)
   async getDriversAvailableWithinRadius(@Query() driverWithinRadiusDto: DriverWithinRadiusDto) {
-    const longitude = parseFloat(driverWithinRadiusDto.longitude);
     const latitude = parseFloat(driverWithinRadiusDto.latitude);
+    const longitude = parseFloat(driverWithinRadiusDto.longitude);
     const radius = parseFloat(driverWithinRadiusDto.radius);
 
     const drivers = await this.getDriversAvailableWithinRadiusUsecaseProxy
       .getInstance()
-      .execute(longitude, latitude, radius);
+      .execute(latitude, longitude, radius);
 
     return drivers.map(driver => new DriverPresenter(driver));
+  }
+
+  @Get(':id')
+  @ApiResponseType(DriverPresenter, false)
+  async getDriver(@Param('id', ParseIntPipe) id: number) {
+    const driver = await this.getDriverUsecaseProxy.getInstance().execute(id);
+    return new DriverPresenter(driver);
   }
 }

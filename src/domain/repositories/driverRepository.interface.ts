@@ -5,8 +5,8 @@ export interface DriverRepository {
   findAll(): Promise<DriverM[]>;
   findAllAvailable(): Promise<DriverM[]>;
   findAllAvailableWithinRadius(
-    longitude: number,
     latitude: number,
+    longitude: number,
     radius?: number,
   ): Promise<DriverM[]>;
   insert(driver: DriverM): Promise<DriverM>;
