@@ -1,5 +1,3 @@
-# docker/Dockerfile
-
 # Stage 1: Build the application
 FROM node:20.16.0-alpine AS builder
 
