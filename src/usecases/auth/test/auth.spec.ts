@@ -1,12 +1,11 @@
 import { IBcryptService } from '../../../domain/adapters/bcrypt.interface';
 import { IJwtService } from '../../../domain/adapters/jwt.interface';
 import { JWTConfig } from '../../../domain/config/jwt.interface';
-import { IException } from '../../../domain/exceptions/exceptions.interface';
 import { ILogger } from '../../../domain/logger/logger.interface';
 import { UserM } from '../../../domain/model/user';
 import { UserRepository } from '../../../domain/repositories/userRepository.interface';
 import { IsAuthenticatedUseCases } from '../isAuthenticated.usecases';
-import { LoginUseCases } from '../signup.usecases';
+import { LoginUseCases } from '../login.usecases';
 import { LogoutUseCases } from '../logout.usecases';
 
 describe('uses_cases/authentication', () => {
@@ -14,7 +13,6 @@ describe('uses_cases/authentication', () => {
   let logoutUseCases: LogoutUseCases;
   let isAuthenticated: IsAuthenticatedUseCases;
   let logger: ILogger;
-  let exception: IException;
   let jwtService: IJwtService;
   let jwtConfig: JWTConfig;
   let adminUserRepo: UserRepository;
@@ -23,8 +21,6 @@ describe('uses_cases/authentication', () => {
   beforeEach(() => {
     logger = {} as ILogger;
     logger.log = jest.fn();
-
-    exception = {} as IException;
 
     jwtService = {} as IJwtService;
     jwtService.createToken = jest.fn();
@@ -81,7 +77,7 @@ describe('uses_cases/authentication', () => {
     it('should return null because user not found', async () => {
       (adminUserRepo.getUserByUsername as jest.Mock).mockReturnValue(Promise.resolve(null));
 
-      expect(await loginUseCases.validateUserForLocalStragtegy('username', 'password')).toEqual(
+      expect(await loginUseCases.validateUserForLocalStrategy('username', 'password')).toEqual(
         null,
       );
     });
@@ -98,7 +94,7 @@ describe('uses_cases/authentication', () => {
       (adminUserRepo.getUserByUsername as jest.Mock).mockReturnValue(Promise.resolve(user));
       (bcryptService.compare as jest.Mock).mockReturnValue(Promise.resolve(false));
 
-      expect(await loginUseCases.validateUserForLocalStragtegy('username', 'password')).toEqual(
+      expect(await loginUseCases.validateUserForLocalStrategy('username', 'password')).toEqual(
         null,
       );
     });
@@ -117,7 +113,7 @@ describe('uses_cases/authentication', () => {
 
       const { password, ...rest } = user;
 
-      expect(await loginUseCases.validateUserForLocalStragtegy('username', 'password')).toEqual(
+      expect(await loginUseCases.validateUserForLocalStrategy('username', 'password')).toEqual(
         rest,
       );
     });
@@ -128,7 +124,7 @@ describe('uses_cases/authentication', () => {
       (adminUserRepo.getUserByUsername as jest.Mock).mockReturnValue(Promise.resolve(null));
       (bcryptService.compare as jest.Mock).mockReturnValue(Promise.resolve(false));
 
-      expect(await loginUseCases.validateUserForJWTStragtegy('username')).toEqual(null);
+      expect(await loginUseCases.validateUserForJWTStrategy('username')).toEqual(null);
     });
 
     it('should return user', async () => {
@@ -143,7 +139,7 @@ describe('uses_cases/authentication', () => {
       };
       (adminUserRepo.getUserByUsername as jest.Mock).mockReturnValue(Promise.resolve(user));
 
-      expect(await loginUseCases.validateUserForJWTStragtegy('username')).toEqual(user);
+      expect(await loginUseCases.validateUserForJWTStrategy('username')).toEqual(user);
     });
   });
 

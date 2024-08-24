@@ -24,7 +24,7 @@ export class ResponseInterceptor<T> implements NestInterceptor<T, ResponseFormat
     const request = httpContext.getRequest();
 
     return next.handle().pipe(
-      map((data) => ({
+      map(data => ({
         data,
         isArray: Array.isArray(data),
         path: request.path,

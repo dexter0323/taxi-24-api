@@ -1,6 +1,5 @@
 import { ILogger } from 'src/domain/logger/logger.interface';
 import { DriverM } from 'src/domain/model/driver';
-import { PassengerM } from 'src/domain/model/passenger';
 import { PassengerRepository } from 'src/domain/repositories/passengerRepository.interface';
 
 export class PassengerRequestTripUseCases {

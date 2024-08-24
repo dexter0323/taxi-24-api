@@ -2,7 +2,6 @@ import { Body, Controller, Get, Inject, Param, ParseIntPipe, Post } from '@nestj
 import { ApiExtraModels, ApiResponse, ApiTags } from '@nestjs/swagger';
 
 import { ApiResponseType } from 'src/infrastructure/common/swagger/response.decorator';
-import { PassengerPresenter } from 'src/infrastructure/controllers/passenger/passenger.presenter';
 import { CompleteTripDto, CreateTripDto } from 'src/infrastructure/controllers/trip/trip-dto.class';
 import { TripPresenter } from 'src/infrastructure/controllers/trip/trip.presenter';
 import { UseCaseProxy } from 'src/infrastructure/usecases-proxy/usecases-proxy';

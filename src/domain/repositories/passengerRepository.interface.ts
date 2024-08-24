@@ -6,5 +6,4 @@ export interface PassengerRepository {
   findAll(): Promise<PassengerM[]>;
   requestTrip(id: number, latitude: number, longitude: number): Promise<DriverM[]>;
   insert(driver: PassengerM): Promise<PassengerM>;
-  deleteById(id: number): Promise<void>;
 }

@@ -2,11 +2,10 @@ import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 
-import { PassengerRepository } from 'src/domain/repositories/passengerRepository.interface';
-import { PassengerM } from 'src/domain/model/passenger';
-import { Passenger } from 'src/infrastructure/entities/passenger.entity';
 import { DriverM } from 'src/domain/model/driver';
-import { Driver } from 'src/infrastructure/entities/driver.entity';
+import { PassengerM } from 'src/domain/model/passenger';
+import { PassengerRepository } from 'src/domain/repositories/passengerRepository.interface';
+import { Passenger } from 'src/infrastructure/entities/passenger.entity';
 import { DatabaseDriverRepository } from 'src/infrastructure/repositories/driver.repository';
 
 @Injectable()
@@ -35,10 +34,6 @@ export class DatabasePassengerRepository implements PassengerRepository {
     const todoEntity = this.toPassengerEntity(driver);
     const result = await this.passengerEntityRepository.insert(todoEntity);
     return this.toPassenger(result.generatedMaps[0] as Passenger);
-  }
-
-  deleteById(id: number): Promise<void> {
-    throw new Error('Method not implemented.');
   }
 
   private toPassenger(passengerEntity: Passenger): PassengerM {

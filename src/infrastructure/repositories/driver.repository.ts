@@ -105,10 +105,6 @@ export class DatabaseDriverRepository implements DriverRepository {
     return this.toDriver(result.generatedMaps[0] as Driver);
   }
 
-  deleteById(id: number): Promise<void> {
-    throw new Error('Method not implemented.');
-  }
-
   private toDriver(driverEntity: Driver & { distance?: string }): DriverM {
     const driver = new DriverM();
 

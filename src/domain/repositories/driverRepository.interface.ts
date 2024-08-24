@@ -10,5 +10,4 @@ export interface DriverRepository {
     radius?: number,
   ): Promise<DriverM[]>;
   insert(driver: DriverM): Promise<DriverM>;
-  deleteById(id: number): Promise<void>;
 }

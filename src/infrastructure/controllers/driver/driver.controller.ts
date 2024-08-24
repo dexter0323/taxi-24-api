@@ -1,15 +1,15 @@
-import { Body, Controller, Get, Inject, Param, ParseIntPipe, Query } from '@nestjs/common';
-import { ApiBody, ApiExtraModels, ApiResponse, ApiTags } from '@nestjs/swagger';
+import { Controller, Get, Inject, Param, ParseIntPipe, Query } from '@nestjs/common';
+import { ApiExtraModels, ApiResponse, ApiTags } from '@nestjs/swagger';
 
 import { ApiResponseType } from 'src/infrastructure/common/swagger/response.decorator';
+import { DriverDto } from 'src/infrastructure/controllers/driver/driver-dto.class';
 import { DriverPresenter } from 'src/infrastructure/controllers/driver/driver.presenter';
 import { UseCaseProxy } from 'src/infrastructure/usecases-proxy/usecases-proxy';
 import { UsecasesProxyModule } from 'src/infrastructure/usecases-proxy/usecases-proxy.module';
-import { GetDriversAvailableUseCases } from 'src/usecases/driver/getDriversAvailable.usecases';
-import { GetDriversAvailableWithinRadiusUseCases } from 'src/usecases/driver/getDriversAvailableWithinRadius.usecases';
 import { GetDriverUseCases } from 'src/usecases/driver/getDriver.usecases';
 import { GetDriversUseCases } from 'src/usecases/driver/getDrivers.usecases';
-import { DriverDto } from 'src/infrastructure/controllers/driver/driver-dto.class';
+import { GetDriversAvailableUseCases } from 'src/usecases/driver/getDriversAvailable.usecases';
+import { GetDriversAvailableWithinRadiusUseCases } from 'src/usecases/driver/getDriversAvailableWithinRadius.usecases';
 
 @Controller('driver')
 @ApiTags('Driver')
