@@ -2,6 +2,8 @@
 
 ## Project setup
 
+This project follows the Clean Architecture pattern, promoting separation of concerns and scalability. It uses **Nest.js** for building server-side applications, **TypeScript** for enhanced code quality, **TypeORM** for database interactions, **Swagger** for API documentation, **Postgres** as the database, and Docker for containerization.
+
 ### Install `nvm` and Node.js
 
 Node.js is required to run the application. It is recommended to use `nvm` (Node Version Manager) to manage Node.js versions. Follow the steps below to install `nvm` and Node.js:
@@ -35,7 +37,7 @@ Docker is required to run the application in a containerized environment. Follow
 
 ## Start API (Docker)
 
-```bash
+```sh
 npm run docker:build
 ```
 
@@ -47,25 +49,25 @@ The application includes seed data to test each endpoint as part of typeorm migr
 
 This ensures you have right node.js version isntalled.
 
-```bash
+```sh
 nvm use && npm install
 ```
 
 Start postgree DB
 
-```bash
+```sh
 npm run docker:db
 ```
 
 Run typeorm migrations
 
-```bash
+```sh
 npm run typeorm:run
 ```
 
 ## Run the project
 
-```bash
+```sh
 # development
 $ npm run start
 
@@ -82,7 +84,7 @@ The application includes seed data to test each endpoint as part of typeorm migr
 
 ## Run tests
 
-```bash
+```sh
 # unit tests
 $ npm run test
 
