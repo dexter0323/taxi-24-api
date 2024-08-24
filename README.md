@@ -1,5 +1,8 @@
 # Taxi24 API
 
+## Demo
+https://github.com/user-attachments/assets/20c58843-7c20-4d88-b835-91f28d7b17f6
+
 ## Project setup
 
 This project follows the Clean Architecture pattern, promoting separation of concerns and scalability. It uses **Nest.js** for building server-side applications, **TypeScript** for enhanced code quality, **TypeORM** for database interactions, **Swagger** for API documentation, **Postgres** as the database, and Docker for containerization.
