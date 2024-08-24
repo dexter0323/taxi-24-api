@@ -15,10 +15,10 @@ export class Trip {
   @PrimaryGeneratedColumn()
   id: number;
 
-  @ManyToOne(() => Passenger, passenger => passenger.trips)
+  @ManyToOne(() => Passenger, passenger => passenger.trips, { nullable: false })
   passenger: Passenger;
 
-  @ManyToOne(() => Driver, driver => driver.trips)
+  @ManyToOne(() => Driver, driver => driver.trips, { nullable: false })
   driver: Driver;
 
   @Column('decimal', { precision: 10, scale: 7 })
@@ -27,16 +27,16 @@ export class Trip {
   @Column('decimal', { precision: 10, scale: 7 })
   start_longitude: number;
 
-  @Column('decimal', { precision: 10, scale: 7 })
+  @Column('decimal', { precision: 10, scale: 7, nullable: true })
   end_latitude: number;
 
-  @Column('decimal', { precision: 10, scale: 7 })
+  @Column('decimal', { precision: 10, scale: 7, nullable: true })
   end_longitude: number;
 
-  @CreateDateColumn()
+  @Column({ type: 'timestamp', nullable: true })
   start_time: Date;
 
-  @UpdateDateColumn()
+  @Column({ type: 'timestamp', nullable: true })
   end_time: Date;
 
   @CreateDateColumn()

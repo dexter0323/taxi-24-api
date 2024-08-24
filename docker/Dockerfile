@@ -25,8 +25,11 @@ RUN npm run build
 # Stage 2: Run the application
 FROM node:20.16.0-alpine
 
+# Set the working directory inside the container
+WORKDIR /usr/app/dist
+
 # Copy only the necessary files from the build stage
-COPY --from=builder /usr/app/dist ./dist
+COPY --from=builder /usr/app/dist ./
 
 # Copy node_modules from the build stage
 COPY --from=builder /usr/app/node_modules ./node_modules

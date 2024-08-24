@@ -26,6 +26,8 @@ import { GetDriversAvailableWithinRadiusUseCases } from 'src/usecases/driver/get
 import { GetPassengerUseCases } from 'src/usecases/passenger/getPassenger.usecases';
 import { GetPassengersUseCases } from 'src/usecases/passenger/getPassengers.usecases';
 import { PassengerRequestTripUseCases } from 'src/usecases/passenger/passengerRequestTrip.usecases';
+import { CompleteTripUseCases } from 'src/usecases/trip/completeTrip.usecases';
+import { CreateTripUseCases } from 'src/usecases/trip/createTrip.usecases';
 import { GetTripsActiveUseCases } from 'src/usecases/trip/getTripsActive.usecases';
 
 @Module({
@@ -69,6 +71,10 @@ export class UsecasesProxyModule {
   // Trip
   /** Obtener un pasajero específico por ID */
   static GET_TRIPS_ACTIVE_USECASES_PROXY = 'getTripsActiveUsecasesProxy';
+  /** Crear una nueva solicitud de "Viaje" asignando un conductor a un pasajero */
+  static CREATE_TRIP_USECASES_PROXY = 'createTripUsecasesProxy';
+  /** Completar un viaje */
+  static COMPLETE_TRIP_USECASES_PROXY = 'completeTripUsecasesProxy';
 
   static register(): DynamicModule {
     return {
@@ -162,6 +168,18 @@ export class UsecasesProxyModule {
           useFactory: (logger: LoggerService, tripRepository: DatabaseTripRepository) =>
             new UseCaseProxy(new GetTripsActiveUseCases(logger, tripRepository)),
         },
+        {
+          inject: [LoggerService, DatabaseTripRepository],
+          provide: UsecasesProxyModule.CREATE_TRIP_USECASES_PROXY,
+          useFactory: (logger: LoggerService, tripRepository: DatabaseTripRepository) =>
+            new UseCaseProxy(new CreateTripUseCases(logger, tripRepository)),
+        },
+        {
+          inject: [LoggerService, DatabaseTripRepository],
+          provide: UsecasesProxyModule.COMPLETE_TRIP_USECASES_PROXY,
+          useFactory: (logger: LoggerService, tripRepository: DatabaseTripRepository) =>
+            new UseCaseProxy(new CompleteTripUseCases(logger, tripRepository)),
+        },
       ],
       exports: [
         UsecasesProxyModule.SIGNUP_USECASES_PROXY,
@@ -179,6 +197,8 @@ export class UsecasesProxyModule {
         UsecasesProxyModule.PASSENGER_REQUEST_TRIP_USECASES_PROXY,
 
         UsecasesProxyModule.GET_TRIPS_ACTIVE_USECASES_PROXY,
+        UsecasesProxyModule.CREATE_TRIP_USECASES_PROXY,
+        UsecasesProxyModule.COMPLETE_TRIP_USECASES_PROXY,
       ],
     };
   }

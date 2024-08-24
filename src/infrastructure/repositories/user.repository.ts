@@ -15,20 +15,11 @@ export class DatabaseUserRepository implements UserRepository {
   ) {}
 
   async updateRefreshToken(username: string, refreshToken: string): Promise<void> {
-    await this.userEntityRepository.update(
-      {
-        username: username,
-      },
-      { hach_refresh_token: refreshToken },
-    );
+    await this.userEntityRepository.update({ username }, { hach_refresh_token: refreshToken });
   }
 
   async getUserByUsername(username: string): Promise<UserM> {
-    const adminUserEntity = await this.userEntityRepository.findOne({
-      where: {
-        username: username,
-      },
-    });
+    const adminUserEntity = await this.userEntityRepository.findOne({ where: { username } });
     if (!adminUserEntity) {
       return null;
     }
@@ -36,12 +27,7 @@ export class DatabaseUserRepository implements UserRepository {
   }
 
   async updateLastLogin(username: string): Promise<void> {
-    await this.userEntityRepository.update(
-      {
-        username: username,
-      },
-      { last_login: () => 'CURRENT_TIMESTAMP' },
-    );
+    await this.userEntityRepository.update({ username }, { last_login: () => 'CURRENT_TIMESTAMP' });
   }
 
   async insert(username: string, password: string): Promise<UserM> {
