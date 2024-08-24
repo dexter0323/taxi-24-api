@@ -35,7 +35,7 @@ Docker is required to run the application in a containerized environment. Follow
     docker --version
    ```
 
-## Start API (Docker)
+## Start API using Docker (RECOMMENDED)
 
 ```sh
 npm run docker:build
@@ -44,6 +44,13 @@ npm run docker:build
 After starting the API, you can access the Swagger API documentation to test the endpoints by navigating to: <http://localhost:3000/api>
 
 The application includes seed data to test each endpoint as part of typeorm migration.
+
+You can use these values to run tests in the Swagger UI:
+
+- **Driver IDs**: from 1 to 7
+- **Passenger IDs**: from 1 to 7
+- **Latitude**: 18.4861
+- **Longitude**: -69.9312
 
 ## Local setup
 
@@ -81,6 +88,13 @@ $ npm run start:prod
 After starting the API, you can access the Swagger API documentation to test the endpoints by navigating to: <http://localhost:3000/api>
 
 The application includes seed data to test each endpoint as part of typeorm migration.
+
+You can use these values to run tests in the Swagger UI:
+
+- **Driver IDs**: from 1 to 7
+- **Passenger IDs**: from 1 to 7
+- **Latitude**: 18.4861
+- **Longitude**: -69.9312
 
 ## Run tests
 
