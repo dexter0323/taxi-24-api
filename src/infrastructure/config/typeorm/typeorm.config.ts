@@ -2,10 +2,6 @@ import * as dotenv from 'dotenv';
 import * as path from 'path';
 import { DataSource } from 'typeorm';
 
-console.log(
-  'env path',
-  path.resolve(__dirname, '../../../../', process.env.ENV_FILE_PATH || '.env'),
-);
 dotenv.config({
   path: path.resolve(__dirname, '../../../../', process.env.ENV_FILE_PATH || '.env'),
 });
@@ -13,8 +9,6 @@ dotenv.config({
 if (!process.env.DB_TYPE) throw new Error('Database type not specified');
 
 let dataSource: DataSource;
-
-console.log('process.env.DB_HOST', process.env.DB_HOST);
 
 switch (process.env.DB_TYPE) {
   case 'postgres':
