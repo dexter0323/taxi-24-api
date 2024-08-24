@@ -2,9 +2,12 @@ import {
   Column,
   CreateDateColumn,
   Entity,
+  OneToMany,
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from 'typeorm';
+
+import { Trip } from './trip.entity';
 
 @Entity('passengers')
 export class Passenger {
@@ -22,4 +25,7 @@ export class Passenger {
 
   @UpdateDateColumn()
   updated_date: Date;
+
+  @OneToMany(() => Trip, trip => trip.driver)
+  trips: Trip[];
 }

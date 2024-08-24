@@ -9,11 +9,12 @@ import { GetDriversAvailableUseCases } from 'src/usecases/driver/getDriversAvail
 import { GetDriversAvailableWithinRadiusUseCases } from 'src/usecases/driver/getDriversAvailableWithinRadius.usecases';
 import { GetDriverUseCases } from 'src/usecases/driver/getDriver.usecases';
 import { GetDriversUseCases } from 'src/usecases/driver/getDrivers.usecases';
-import { DriverWithinRadiusDto } from 'src/infrastructure/controllers/driver/driver-dto.class';
+import { DriverDto } from 'src/infrastructure/controllers/driver/driver-dto.class';
 
 @Controller('driver')
 @ApiTags('Driver')
 @ApiResponse({ status: 500, description: 'Internal error' })
+// @ApiResponse({ status: 200, description: 'Successful response', type: DriverDto })
 @ApiExtraModels(DriverPresenter)
 export class DriverController {
   constructor(
@@ -43,7 +44,7 @@ export class DriverController {
 
   @Get('available-within-radius')
   @ApiResponseType(DriverPresenter, true)
-  async getDriversAvailableWithinRadius(@Query() driverWithinRadiusDto: DriverWithinRadiusDto) {
+  async getDriversAvailableWithinRadius(@Query() driverWithinRadiusDto: DriverDto) {
     const latitude = parseFloat(driverWithinRadiusDto.latitude);
     const longitude = parseFloat(driverWithinRadiusDto.longitude);
     const radius = parseFloat(driverWithinRadiusDto.radius);

@@ -1,10 +1,13 @@
 import {
-  Entity,
   Column,
-  PrimaryGeneratedColumn,
   CreateDateColumn,
+  Entity,
+  OneToMany,
+  PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from 'typeorm';
+
+import { Trip } from './trip.entity';
 
 import { DriverStatus } from 'src/domain/model/driver';
 
@@ -13,6 +16,7 @@ export class Driver {
   @PrimaryGeneratedColumn()
   id: number;
 
+  // TODO: Remove this column after implement trip entity repository
   @Column({
     type: 'enum',
     enum: DriverStatus,
@@ -31,4 +35,7 @@ export class Driver {
 
   @UpdateDateColumn()
   updated_date: Date;
+
+  @OneToMany(() => Trip, trip => trip.driver)
+  trips: Trip[];
 }

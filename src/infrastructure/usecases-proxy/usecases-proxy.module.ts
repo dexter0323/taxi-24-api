@@ -8,6 +8,7 @@ import { LoggerService } from 'src/infrastructure/logger/logger.service';
 import { DatabaseDriverRepository } from 'src/infrastructure/repositories/driver.repository';
 import { DatabasePassengerRepository } from 'src/infrastructure/repositories/passenger.repository';
 import { RepositoriesModule } from 'src/infrastructure/repositories/repositories.module';
+import { DatabaseTripRepository } from 'src/infrastructure/repositories/trip.repository';
 import { DatabaseUserRepository } from 'src/infrastructure/repositories/user.repository';
 import { BcryptModule } from 'src/infrastructure/services/bcrypt/bcrypt.module';
 import { BcryptService } from 'src/infrastructure/services/bcrypt/bcrypt.service';
@@ -25,6 +26,7 @@ import { GetDriversAvailableWithinRadiusUseCases } from 'src/usecases/driver/get
 import { GetPassengerUseCases } from 'src/usecases/passenger/getPassenger.usecases';
 import { GetPassengersUseCases } from 'src/usecases/passenger/getPassengers.usecases';
 import { PassengerRequestTripUseCases } from 'src/usecases/passenger/passengerRequestTrip.usecases';
+import { GetTripsActiveUseCases } from 'src/usecases/trip/getTripsActive.usecases';
 
 @Module({
   imports: [
@@ -63,6 +65,10 @@ export class UsecasesProxyModule {
   static GET_PASSENGERS_USECASES_PROXY = 'getPassengersUsecasesProxy';
   /** Para un pasajero solicitando un viaje, obtenga una lista de los 3 conductores más cercanos al punto de partida */
   static PASSENGER_REQUEST_TRIP_USECASES_PROXY = 'passengerRequestTripUsecasesProxy';
+
+  // Trip
+  /** Obtener un pasajero específico por ID */
+  static GET_TRIPS_ACTIVE_USECASES_PROXY = 'getTripsActiveUsecasesProxy';
 
   static register(): DynamicModule {
     return {
@@ -149,6 +155,13 @@ export class UsecasesProxyModule {
           useFactory: (logger: LoggerService, passengerRepository: DatabasePassengerRepository) =>
             new UseCaseProxy(new PassengerRequestTripUseCases(logger, passengerRepository)),
         },
+
+        {
+          inject: [LoggerService, DatabaseTripRepository],
+          provide: UsecasesProxyModule.GET_TRIPS_ACTIVE_USECASES_PROXY,
+          useFactory: (logger: LoggerService, tripRepository: DatabaseTripRepository) =>
+            new UseCaseProxy(new GetTripsActiveUseCases(logger, tripRepository)),
+        },
       ],
       exports: [
         UsecasesProxyModule.SIGNUP_USECASES_PROXY,
@@ -164,6 +177,8 @@ export class UsecasesProxyModule {
         UsecasesProxyModule.GET_PASSENGER_USECASES_PROXY,
         UsecasesProxyModule.GET_PASSENGERS_USECASES_PROXY,
         UsecasesProxyModule.PASSENGER_REQUEST_TRIP_USECASES_PROXY,
+
+        UsecasesProxyModule.GET_TRIPS_ACTIVE_USECASES_PROXY,
       ],
     };
   }

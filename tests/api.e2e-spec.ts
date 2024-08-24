@@ -71,7 +71,7 @@ describe('infrastructure/controllers/auth', () => {
   it(`/POST login should return 201`, async () => {
     const createDate = new Date().toISOString();
     const updatedDate = new Date().toISOString();
-    (loginUseCase.validateUserForLocalStragtegy as jest.Mock).mockReturnValue(
+    (loginUseCase.validateUserForLocalStrategy as jest.Mock).mockReturnValue(
       Promise.resolve({
         id: 1,
         username: 'username',

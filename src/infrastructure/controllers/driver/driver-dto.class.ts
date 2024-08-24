@@ -1,7 +1,7 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { IsNotEmpty, IsNumber, IsNumberString, IsString } from 'class-validator';
 
-export class DriverWithinRadiusDto {
+export class DriverDto {
   @ApiProperty({ required: true })
   @IsNotEmpty()
   @IsNumberString()
